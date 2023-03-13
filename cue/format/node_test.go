@@ -97,3 +97,27 @@ func TestErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestPrintErrors(t *testing.T) {
+	testCases := []struct {
+		desc string
+		node interface{}
+		err  string
+	}{{
+		desc: "empty identifier",
+		node: int32(5),
+		err:  "cue/format: unsupported node type int32",
+	}}
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			err := printNode(tc.node, &printer{})
+			if err == nil {
+				t.Fatalf("expected error")
+			}
+			got := err.Error()
+			if !strings.Contains(got, tc.err) {
+				t.Errorf("\ngot  %v;\nwant %v", got, tc.err)
+			}
+		})
+	}
+}
